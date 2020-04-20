@@ -3,71 +3,38 @@ package hs256
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 
 	"github.com/ucarion/jwt"
-	"github.com/ucarion/jwt/internal/parts"
+	"github.com/ucarion/jwt/internal/verify"
 )
 
 const Algorithm = "HS256"
 
 func Validate(secret, s []byte, v interface{}) error {
-	parts, err := parts.Parse(s)
+	claims, err := verify.Verify(Algorithm, s, func(data, sig []byte) error {
+		h := hmac.New(sha256.New, secret)
+		h.Write(data)
+
+		if !hmac.Equal(h.Sum(nil), sig) {
+			return jwt.ErrInvalidSignature
+		}
+
+		return nil
+	})
+
 	if err != nil {
 		return err
 	}
 
-	decodedHeader, err := base64.RawURLEncoding.DecodeString(parts.Header)
-	if err != nil {
-		return err
-	}
-
-	var header jwt.Header
-	if err := json.Unmarshal(decodedHeader, &header); err != nil {
-		return err
-	}
-
-	if header.Algorithm != Algorithm {
-		return jwt.ErrWrongAlgorithm
-	}
-
-	decodedSignature, err := base64.RawURLEncoding.DecodeString(parts.Signature)
-	if err != nil {
-		return err
-	}
-
-	h := hmac.New(sha256.New, secret)
-	h.Write([]byte(parts.Header + "." + parts.Claims))
-
-	if !hmac.Equal(h.Sum(nil), decodedSignature) {
-		return jwt.ErrInvalidSignature
-	}
-
-	decodedClaims, err := base64.RawURLEncoding.DecodeString(parts.Claims)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(decodedClaims, v)
+	return json.Unmarshal(claims, v)
 }
 
 func Encode(secret []byte, v interface{}) ([]byte, error) {
-	header := jwt.Header{Type: jwt.HeaderTypeJWT, Algorithm: Algorithm}
-	encodedHeader, err := json.Marshal(header)
-	if err != nil {
-		return nil, err
-	}
+	return verify.Encode(Algorithm, v, func(data []byte) ([]byte, error) {
+		h := hmac.New(sha256.New, secret)
+		h.Write(data)
 
-	encodedClaims, err := json.Marshal(v)
-	if err != nil {
-		return nil, err
-	}
-
-	payload := base64.RawURLEncoding.EncodeToString(encodedHeader) + "." + base64.RawURLEncoding.EncodeToString(encodedClaims)
-
-	h := hmac.New(sha256.New, secret)
-	h.Write([]byte(payload))
-
-	return []byte(payload + "." + base64.RawURLEncoding.EncodeToString(h.Sum(nil))), nil
+		return h.Sum(nil), nil
+	})
 }
