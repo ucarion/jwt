@@ -33,7 +33,7 @@ func Validate(pub *rsa.PublicKey, s []byte, v interface{}) error {
 }
 
 func Encode(priv *rsa.PrivateKey, v interface{}) ([]byte, error) {
-	return verify.Encode(Algorithm, v, func(data []byte) ([]byte, error) {
+	return verify.Encode(Algorithm, 256, v, func(data []byte) ([]byte, error) {
 		h := crypto.SHA256.New()
 		h.Write(data)
 

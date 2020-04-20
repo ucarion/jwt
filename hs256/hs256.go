@@ -31,7 +31,7 @@ func Validate(secret, s []byte, v interface{}) error {
 }
 
 func Encode(secret []byte, v interface{}) ([]byte, error) {
-	return verify.Encode(Algorithm, v, func(data []byte) ([]byte, error) {
+	return verify.Encode(Algorithm, sha256.Size, v, func(data []byte) ([]byte, error) {
 		h := hmac.New(sha256.New, secret)
 		h.Write(data)
 
