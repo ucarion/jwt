@@ -38,7 +38,7 @@ func TestVerify(t *testing.T) {
 }
 
 func TestEncode(t *testing.T) {
-	s, err := verify.Encode("test", true, func(data []byte) ([]byte, error) {
+	s, err := verify.Encode("test", 3, true, func(data []byte) ([]byte, error) {
 		// echo -n '{"typ":"JWT","alg":"test"}' | base64 | tr -d =
 		// echo -n 'true' | base64 | tr -d =
 		assert.Equal(t, []byte("eyJ0eXAiOiJKV1QiLCJhbGciOiJ0ZXN0In0.dHJ1ZQ"), data)
@@ -49,7 +49,7 @@ func TestEncode(t *testing.T) {
 	assert.Equal(t, []byte("eyJ0eXAiOiJKV1QiLCJhbGciOiJ0ZXN0In0.dHJ1ZQ.c2ln"), s)
 
 	testErr := errors.New("test error")
-	_, err = verify.Encode("test", true, func(data []byte) ([]byte, error) {
+	_, err = verify.Encode("test", 3, true, func(data []byte) ([]byte, error) {
 		return nil, testErr
 	})
 
