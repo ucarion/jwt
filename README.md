@@ -1,4 +1,4 @@
-# jwt
+# jwt [![docs](https://godoc.org/github.com/ucarion/jwt?status.svg)](https://pkg.go.dev/github.com/ucarion/jwt?tab=doc)
 
 This package is a Golang implementation of JSON Web Tokens that helps you avoid
 common security mistakes when using JWTs. It does this by giving you:
