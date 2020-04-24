@@ -42,8 +42,8 @@ have. In particular:
 1. **The `alg` header does not decide what algorithm gets used. *You* decide
    what algorithm gets used.**
 
-   This package not support letting JWTs decide which verification algorithm is
-   used. When you use this package, you choose a different function
+   This package does not support letting JWTs decide which verification
+   algorithm is used. When you use this package, you choose a different function
    (`VerifyHS256`, `VerifyRS256`, or `VerifyES256`) based on whether you want to
    use HS256, RS256, or ES256. If the token you're verifying doesn't have the
    expected algorithm in its header, it's considered invalid.
