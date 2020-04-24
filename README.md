@@ -1,7 +1,7 @@
 # jwt
 
-This package is a Golang implementation of JSON Web Token that helps you avoid
-common security mistakes when using JWT. It does this by giving you:
+This package is a Golang implementation of JSON Web Tokens that helps you avoid
+common security mistakes when using JWTs. It does this by giving you:
 
 1. An extremely simple, straightforward interface for securely reading and
    generating JWTs.
@@ -11,20 +11,13 @@ common security mistakes when using JWT. It does this by giving you:
 This package exports the simplest possible interface for using JWTs in Golang:
 
 ```go
-import "github.com/ucarion/jwt"
-
 // This is how you generate a JWT:
 claims := jwt.StandardClaims{Subject: "john.doe@example.com"}
 token, err := jwt.SignHS256([]byte("my-jwt-secret"), claims)
 ```
 
 ```go
-import "github.com/ucarion/jwt"
-
-// This is how you generate a JWT:
-//
-// If the token isn't valid, err will be jwt.ErrInvalidSignature and claims will
-// be untouched.
+// This is how you verify a JWT:
 var claims jwt.StandardClaims
 err := jwt.VerifyHS256([]byte("my-jwt-secret"), token, &claims)
 ```
