@@ -45,22 +45,6 @@ func SignHS256(secret []byte, v interface{}) ([]byte, error) {
 // VerifyHS256 verifies a JWT using a secret. If the JWT is verified,
 // VerifyHS256 will serialize the claims inside the JWT into v.
 //
-// VerifyHS256 can verify tokens signed by SignHS256.
-//
-// When using SignHS256 and VerifyHS256 in production, use a long,
-// randomly-generated secret. Do not leak or give out the secret to any systems
-// or people that don't need it, because they will be able to generate JWTs that
-// will be indistinguishable from the ones you can generate yourself.
-//
-// HS256 is short for HMAC SHA-256. It is a mechanism for message
-// authentication. By signing a set of claims with SignHS256, you have not
-// encrypted it. It is trivial for anyone to read the data stored in the return
-// value of SignHS256. All SignHS256 gives you is a signature that proves that
-// when you generated a JWT, you had a particular secret on hand -- and it does
-// this without giving away what the secret is. VerifyHS256 can verify the JWTs
-// produced by SignHS256; to do this, it needs to use the same secret you gave
-// to SignHS256.
-//
 // The second parameter to this function, v, should be a pointer to something
 // compatible with the encoding/json package of the standard library. If
 // verification succeeds, VerifyHS256 will deserialize the claims in the JWT
