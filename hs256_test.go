@@ -11,10 +11,18 @@ import (
 )
 
 func TestVerifyHS256(t *testing.T) {
+	// This key is from:
+	//
+	// https://tools.ietf.org/html/rfc7515#appendix-A.1.1
 	encodedKey := "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
 	key, err := base64.RawURLEncoding.DecodeString(encodedKey)
 	assert.NoError(t, err)
 
+	// This JWT is from:
+	//
+	// https://tools.ietf.org/html/rfc7519#section-3.1
+	//
+	// It also appears in RFC7515.
 	s := "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
 
 	var claims map[string]interface{}
@@ -27,6 +35,8 @@ func TestVerifyHS256(t *testing.T) {
 }
 
 func TestSignHS256(t *testing.T) {
+	// We can't reproduce exactly the same JWT that appears in the RFC, because
+	// the RFC uses claims with some weird JSON indentation.
 	encodedKey := "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
 	key, err := base64.RawURLEncoding.DecodeString(encodedKey)
 	assert.NoError(t, err)
