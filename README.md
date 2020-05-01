@@ -52,12 +52,12 @@ have. In particular:
    packages make you supply a list of "acceptable" algorithms, or give you back
    the algorithm it ended up using, and you have to do the check yourself.
 
-   Approaches like this are security risks because they're easy to forget to do,
-   and forgetting to check the algorithm will lead to security vulnerabilities.
-   This package circumvents those risks by not letting untrusted,
-   unauthenticated JWTs decide what algorithm gets used: you, the developer,
-   decide what algorithm gets used, and the JWT is invalid if it doesn't use the
-   right algorithm.
+   Manual `alg`-checking is a security risk because it's easy to forget to do,
+   and forgetting to check the algorithm will often lead to security
+   vulnerabilities. This package circumvents those risks by not letting
+   untrusted, unauthenticated JWTs decide what algorithm gets used: you, the
+   developer, decide what algorithm gets used, and the JWT is invalid if it
+   doesn't use the right algorithm.
 
 ## Example usage
 
@@ -173,4 +173,64 @@ var publicKey *ecdsa.PublicKey
 
 var claims jwt.StandardClaims
 err := jwt.VerifyES256(publicKey, token, &claims)
+```
+
+## Performance
+
+Do your own benchmarking if performance matters a lot to you, but you can expect
+slightly better performance with this package over
+[`github.com/dgrijalva/jwt-go`](https://github.com/dgrijalva/jwt-go).
+
+### HS256
+
+```text
+go test -benchmem -bench "^BenchmarkJWT/hs256" ./...
+```
+
+```text
+goos: darwin
+goarch: amd64
+pkg: github.com/ucarion/jwt
+BenchmarkJWT/hs256/sign/ucarion-8         	  342206	      3481 ns/op	    1192 B/op	      14 allocs/op
+BenchmarkJWT/hs256/sign/dgrijalva-8       	  195742	      5288 ns/op	    2664 B/op	      38 allocs/op
+BenchmarkJWT/hs256/verify/ucarion-8       	  156759	      7297 ns/op	    2168 B/op	      32 allocs/op
+BenchmarkJWT/hs256/verify/dgrijalva-8     	  127647	      7865 ns/op	    3720 B/op	      55 allocs/op
+PASS
+ok  	github.com/ucarion/jwt	5.672s
+```
+
+### RS256
+
+```text
+go test -benchmem -bench "^BenchmarkJWT/rs256" ./...
+```
+
+```text
+goos: darwin
+goarch: amd64
+pkg: github.com/ucarion/jwt
+BenchmarkJWT/rs256/sign/ucarion-8         	     844	   1391652 ns/op	   22630 B/op	      94 allocs/op
+BenchmarkJWT/rs256/sign/dgrijalva-8       	     838	   1418973 ns/op	   24680 B/op	     117 allocs/op
+BenchmarkJWT/rs256/verify/ucarion-8       	   17104	     70495 ns/op	    7171 B/op	      38 allocs/op
+BenchmarkJWT/rs256/verify/dgrijalva-8     	   16432	     75944 ns/op	    9308 B/op	      60 allocs/op
+PASS
+ok  	github.com/ucarion/jwt	6.701s
+```
+
+### ES256
+
+```text
+go test -benchmem -bench "^BenchmarkJWT/es256" ./...
+```
+
+```text
+goos: darwin
+goarch: amd64
+pkg: github.com/ucarion/jwt
+BenchmarkJWT/es256/sign/ucarion-8         	   36021	     30409 ns/op	    3630 B/op	      44 allocs/op
+BenchmarkJWT/es256/sign/dgrijalva-8       	   36921	     32709 ns/op	    5231 B/op	      69 allocs/op
+BenchmarkJWT/es256/verify/ucarion-8       	   13533	     89521 ns/op	    2873 B/op	      46 allocs/op
+BenchmarkJWT/es256/verify/dgrijalva-8     	   13586	     92457 ns/op	    4489 B/op	      68 allocs/op
+PASS
+ok  	github.com/ucarion/jwt	7.376s
 ```
